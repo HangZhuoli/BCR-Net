@@ -12,13 +12,14 @@ Implementation of paper - DREB-Net: Dual-stream Restoration Embedding Blur-featu
 
 ## Performance 
 
-Test Results on The Blurred VisDrone-2019-DET Dataset. 
+Test Results on The Blurred Crater Martian Dataset. 
 
 <div align="center">
     <a href="./">
-        <img src="./figure/results.png" width="79%"/>
+        <img src="./figure/results.jpg" width="79%"/>
     </a>
 </div>
+
 
 
 ## Usage
@@ -60,4 +61,3 @@ sh bash/inference.sh
         <img src="./figure/inference.png" width="79%"/>
     </a>
 </div>
-
