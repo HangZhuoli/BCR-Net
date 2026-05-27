@@ -1,5 +1,5 @@
 ARCH=DREB_Net
-EXP_ID=train_DREB_Net_model_Crater
+EXP_ID=create_DREB_FPN_Net_detect_SSAttn_v2
 DATASET=crater
 INP_SHARP_OR_BLUR=SB_deblur
 SHARP_DATA_DIR=../dataset/GeoMar/GeoMar-Crater-preprocess_ignore_black  #注意数据集的存放的对应的路径
