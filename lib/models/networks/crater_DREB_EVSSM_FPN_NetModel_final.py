@@ -87,9 +87,6 @@ class RepVGGBlock_useSE(nn.Module):
         return self.nonlinearity(self.se(out))
 
 
-##########################################
-# ======== 特征融合模块 MAGFF ========
-##########################################
 class MAGFF(nn.Module):
     def __init__(self, channels=128, r=4):
         super(MAGFF, self).__init__()
@@ -117,10 +114,8 @@ class MAGFF(nn.Module):
         return x1 * weight + x2 * (1 - weight)
 
 
-##########################################
-# ======== 空域自适应高斯增强模块（改进版） ========
-##########################################
-class AdaptiveGaussianEnhance_v2(nn.Module):
+
+class ASGE(nn.Module):
     def __init__(self, channels, kernel_size=5, init_sigma=1.5):
         super().__init__()
         self.channels = channels
@@ -160,9 +155,6 @@ class AdaptiveGaussianEnhance_v2(nn.Module):
         return out
 
 
-##########################################
-# ======== S6 注意力模块 ========
-##########################################
 class WithBias_LayerNorm(nn.Module):
     def __init__(self, normalized_shape):
         super().__init__()
@@ -288,7 +280,7 @@ class SS2D(nn.Module):
         return out
 
 
-class S6GatingAttention(nn.Module):
+class SSSA(nn.Module):
     def __init__(self, channels):
         super().__init__()
         self.pre_proj = nn.Conv2d(channels, channels, 1, bias=False)
@@ -307,9 +299,7 @@ class S6GatingAttention(nn.Module):
         return x * gate + x
 
 
-##########################################
-# ======== 改进版 FPN + FPNInception ========
-##########################################
+
 class FPN_SSAttn_v2(nn.Module):
     def __init__(self, norm_layer, num_filters=256):
         super().__init__()
@@ -321,10 +311,10 @@ class FPN_SSAttn_v2(nn.Module):
         self.enc3 = nn.Sequential(self.inception.mixed_5b, self.inception.repeat, self.inception.mixed_6a)
         self.enc4 = nn.Sequential(self.inception.repeat_1, self.inception.mixed_7a)
 
-        self.s6_0 = S6GatingAttention(32)
-        self.s6_1 = S6GatingAttention(64)
-        self.s6_2 = S6GatingAttention(192)
-        self.s6_3 = S6GatingAttention(1088)
+        self.s6_0 = SSSA(32)
+        self.s6_1 = SSSA(64)
+        self.s6_2 = SSSA(192)
+        self.s6_3 = SSSA(1088)
 
         self.lateral4 = nn.Conv2d(2080, num_filters, 1, bias=False)
         self.lateral3 = nn.Conv2d(1088, num_filters, 1, bias=False)
@@ -386,10 +376,8 @@ class FPNInception_SSAttn_v2(nn.Module):
         return smoothed2, final
 
 
-##########################################
-# ======== 主干 DREB_Net 整合版 ========
-##########################################
-class DREB_FPN_Net_SSAttn_v2(nn.Module):
+
+class BCR(nn.Module):
     def __init__(self, heads=None, head_conv=64):
         super().__init__()
         self.heads = heads
@@ -406,7 +394,7 @@ class DREB_FPN_Net_SSAttn_v2(nn.Module):
         self.deblur_FPN = FPNInception_SSAttn_v2(norm_layer=nn.BatchNorm2d, num_filters=128, num_filters_fpn=256)
 
         self.feature_fusion = MAGFF(channels=128)
-        self.AGE = AdaptiveGaussianEnhance_v2(channels=128, kernel_size=5, init_sigma=1.5)
+        self.ASGEM = ASGE(channels=128, kernel_size=5, init_sigma=1.5)
 
         for head in sorted(self.heads):
             num_output = self.heads[head]
@@ -448,9 +436,9 @@ class DREB_FPN_Net_SSAttn_v2(nn.Module):
 
         fpn_up = F.interpolate(fpn_feat, size=out.shape[-2:], mode='bilinear', align_corners=False)
         fused = self.feature_fusion(out, fpn_up)
-        save_feature_map(fused, "fused_before_AGE")
-        fused = fused + self.AGE(fused)
-        save_feature_map(fused, "fused_after_AGE")
+        save_feature_map(fused, "fused_before_ASGE")
+        fused = fused + self.ASGEM(fused)
+        save_feature_map(fused, "fused_after_ASGE")
 
         for blk in self.stage3:
             fused = blk(fused)
@@ -473,17 +461,14 @@ class DREB_FPN_Net_SSAttn_v2(nn.Module):
             raise ValueError("mode not eq train/val!!!")
 
 
-def create_DREB_FPN_Net_detect_SSAttn_v2(heads=None, head_conv=None):
-    print('create DREB_Net_detect with improved FPN + S6 attention')
-    return DREB_FPN_Net_SSAttn_v2(heads=heads, head_conv=head_conv)
+def BCR_Net(heads=None, head_conv=None):
+    print('create BCR-Net')
+    return BCR(heads=heads, head_conv=head_conv)
 
 
-##########################################
-# ======== 测试 ========
-##########################################
 if __name__ == '__main__':
     heads = {'hm': 1, 'wh': 2, 'reg': 2}
-    model = create_DREB_FPN_Net_detect_SSAttn_v2(heads=heads, head_conv=64).cuda()
+    model = BCR_Net(heads=heads, head_conv=64).cuda()
     x = torch.randn(1, 3, 256, 256).cuda()
     try:
         y, fpn_feat = model(x, mode='train')

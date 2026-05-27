@@ -12,17 +12,11 @@ from .networks.DREB_Net_tiny_model import create_DREB_Net_tiny_detect
 修改网路模型架构
 
 """
-# 对文件进行了修改，增加了陨石坑自定义模型 ，选择第三种运行方案，实现陨石坑检测
-from .networks.crater_DREB_Net_model import create_DREB_Net_detect
-from .networks.crater_DREB_FPN_Net_model import create_DREB_FPN_Net_detect
-from .networks.crater_DREB_EVSSM_Net_model import create_DREB_EVSSM_Net_detect
-from .networks.crater_DREB_EVSSM_FPN_NetModel import create_DREB_FPN_Net_detect_SSAttn
-from.networks.crater_DREB_EVSSM_FPN_NetModel_final import create_DREB_FPN_Net_detect_SSAttn_v2
+# 对文件进行了修改，增加了陨石坑自定义模型 ，实现陨石坑检测
+from.networks.crater_DREB_EVSSM_FPN_NetModel_final import BCR_Net
 
 _model_factory = {
-    'DREB_Net': create_DREB_Net_detect,
-    'DREB_Net_tiny': create_DREB_Net_tiny_detect,
-    'DREB_Net_crater': create_DREB_FPN_Net_detect_SSAttn_v2,
+    'DREB_Net_crater': BCR_Net,
 }
 
 
