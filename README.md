@@ -75,7 +75,7 @@ Performance comparison of different methods on the **BMCD** test dataset. The fo
 
 <div align="center">
     <a href="./">
-        <img src="./figure/resdisplay.jpg" width="79%"/>
+        <img src="./figure/resdisplay.png" width="79%"/>
     </a>
 </div>
 
