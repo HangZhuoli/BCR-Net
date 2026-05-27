@@ -6,7 +6,7 @@ Martian planetary landers are highly susceptible to motion blur during descent d
 
 To bridge this gap, a **Blurred Martian Crater Dataset (BMCD)** is constructed, and a dual-branch framework, termed **Blurred Crater Recognition Network (BCR-Net)**, is proposed for robust crater detection under degraded imaging conditions. The framework incorporates an auxiliary blur restoration branch to compensate for information loss and enhance feature representation.
 
-Specifically, a **Multi-level Attention-Guided Feature Fusion (MAGFF)** module is developed to enable adaptive cross-branch feature interaction by jointly exploiting local and global contextual cues. Furthermore, a **Spatially Selective State-space Attention (S$^{3}$A)** mechanism is introduced to model distance-aware spatial dependencies in crater distributions, capturing both short- and long-range relationships under blur degradation. In addition, an **Adaptive Spatial Gaussian Enhancement (ASGE)** module is proposed to strengthen crater boundary representations and recover fine-grained textures via adaptive Difference-of-Gaussians operations, thereby mitigating blur-induced boundary diffusion.
+Specifically, a **Multi-level Attention-Guided Feature Fusion module is developed to enable adaptive cross-branch feature interaction by jointly exploiting local and global contextual cues. **Furthermore, a **Spatially Selective State-space Attentio** n mechanism is introduced to model distance-aware spatial dependencies in crater distributions, capturing both short- and long-range relationships under blur degradation. In addition, an **Adaptive Spatial Gaussian Enhancement ** module is proposed to strengthen crater boundary representations and recover fine-grained textures via adaptive Difference-of-Gaussians operations, thereby mitigating blur-induced boundary diffusion.
 
 Extensive experiments on the **BMCD** test dataset demonstrate that the proposed method consistently outperforms existing approaches. In particular, the detection accuracy for small-scale craters improves from **59.2%** to **68.0%**, achieving an **F1-score of 88.4%** and a **precision of 87.4%**.
 
@@ -78,4 +78,3 @@ Performance comparison of different methods on the **BMCD** test dataset. The fo
         <img src="./figure/resdisplay.png" width="79%"/>
     </a>
 </div>
-
